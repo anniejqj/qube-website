@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qube - 校园智能问答平台</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #6ab4f7;
+            --primary-purple: #b48ede;
+            --light-blue: #a8d8f8;
+            --light-purple: #d4b8f0;
+            --soft-pink: #f0c8d8;
+            --bg-gradient-start: #e8f4fd;
+            --bg-gradient-end: #f0e8fa;
+            --text-dark: #2d3748;
+            --text-medium: #4a5568;
+            --text-light: #718096;
+            --card-bg: rgba(255, 255, 255, 0.85);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Nunito', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Watercolor Background Blobs */
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--primary-blue);
+            top: -200px;
+            right: -200px;
+        }
+
+        .blob-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--primary-purple);
+            bottom: 20%;
+            left: -150px;
+            animation-delay: -7s;
+        }
+
+        .blob-3 {
+            width: 400px;
+            height: 400px;
+            background: var(--soft-pink);
+            top: 50%;
+            right: -100px;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            color: var(--primary-purple);
+            text-decoration: none;
+        }
+
+        .nav-logo .cube-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(180, 142, 222, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-medium);
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            transition: width 0.3s;
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-purple);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 40px 80px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .hero-text .subtitle {
+            font-size: 20px;
+            color: var(--text-medium);
+            line-height: 1.8;
+            margin-bottom: 36px;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn-primary {
+            padding: 14px 36px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(106, 180, 247, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(106, 180, 247, 0.4);
+        }
+
+        .btn-secondary {
+            padding: 14px 36px;
+            background: transparent;
+            color: var(--primary-purple);
+            border: 2px solid var(--light-purple);
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-purple);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .cube-mascot {
+            width: 320px;
+            height: 320px;
+            position: relative;
+            animation: mascotFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes mascotFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .cube-body {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-purple), var(--soft-pink));
+            border-radius: 30px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-5deg);
+            box-shadow: 0 20px 60px rgba(106, 180, 247, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cube-eyes {
+            display: flex;
+            gap: 24px;
+            margin-top: -10px;
+        }
+
+        .eye {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .eye::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #2d3748;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: eyeLook 4s ease-in-out infinite;
+        }
+
+        @keyframes eyeLook {
+            0%, 100% { transform: translate(-50%, -50%); }
+            25% { transform: translate(-30%, -50%); }
+            75% { transform: translate(-70%, -50%); }
+        }
+
+        .cube-sparkles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: 4px;
+            opacity: 0.6;
+            animation: sparkleFloat 3s ease-in-out infinite;
+        }
+
+        .sparkle:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; transform: rotate(45deg); }
+        .sparkle:nth-child(2) { top: 5%; right: 20%; animation-delay: 0.5s; width: 14px; height: 14px; }
+        .sparkle:nth-child(3) { bottom: 20%; left: 5%; animation-delay: 1s; width: 16px; height: 16px; }
+        .sparkle:nth-child(4) { bottom: 10%; right: 10%; animation-delay: 1.5s; }
+        .sparkle:nth-child(5) { top: 30%; right: 5%; animation-delay: 2s; width: 12px; height: 12px; }
+
+        @keyframes sparkleFloat {
+            0%, 100% { transform: rotate(45deg) scale(1); opacity: 0.6; }
+            50% { transform: rotate(45deg) scale(1.3); opacity: 1; }
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: 'Nunito', sans-serif;
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 18px;
+            margin-bottom: 60px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* About Section - Bento Grid */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: auto auto;
+            gap: 20px;
+        }
+
+        .bento-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+        }
+
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+
+        .bento-card.wide {
+            grid-column: span 2;
+        }
+
+        .bento-card.tall {
+            grid-row: span 2;
+        }
+
+        .bento-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(106, 180, 247, 0.2);
+        }
+
+        .bento-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .bento-card p {
+            color: var(--text-medium);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* Features Section - Interactive Cards */
+        .features-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(106, 180, 247, 0.15);
+        }
+
+        .feature-card .feature-number {
+            font-family: 'Nunito', sans-serif;
+            font-size: 72px;
+            font-weight: 900;
+            background: linear-gradient(135deg, rgba(106, 180, 247, 0.15), rgba(180, 142, 222, 0.15));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: absolute;
+            top: 20px;
+            right: 30px;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feature-card h3 .emoji {
+            font-size: 28px;
+        }
+
+        .feature-card p {
+            color: var(--text-medium);
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        .feature-card .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .feature-tag {
+            padding: 6px 14px;
+            background: linear-gradient(135deg, rgba(106, 180, 247, 0.1), rgba(180, 142, 222, 0.1));
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--primary-purple);
+            font-weight: 500;
+            border: 1px solid rgba(180, 142, 222, 0.2);
+        }
+
+        /* How It Works - Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary-blue), var(--primary-purple), var(--soft-pink));
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(106, 180, 247, 0.3);
+            z-index: 2;
+        }
+
+        .timeline-content {
+            width: 42%;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
+        }
+
+        .timeline-content h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary-purple);
+        }
+
+        .timeline-content p {
+            color: var(--text-medium);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* Roadmap Section */
+        .roadmap-container {
+            display: flex;
+            gap: 0;
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .roadmap-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple), var(--soft-pink));
+            border-radius: 2px;
+            transform: translateY(-50%);
+        }
+
+        .roadmap-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            padding: 0 16px;
+        }
+
+        .roadmap-node {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            border: 4px solid white;
+            box-shadow: 0 4px 16px rgba(106, 180, 247, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .roadmap-item.completed .roadmap-node {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            box-shadow: 0 4px 16px rgba(72, 187, 120, 0.3);
+        }
+
+        .roadmap-item.current .roadmap-node {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 4px 16px rgba(106, 180, 247, 0.3); }
+            50% { box-shadow: 0 4px 24px rgba(106, 180, 247, 0.6); }
+        }
+
+        .roadmap-label {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .roadmap-label h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+        }
+
+        .roadmap-label p {
+            font-size: 13px;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        /* Stats Section */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 60px 40px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+            margin: 40px auto;
+            max-width: 900px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Nunito', sans-serif;
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* Feedback Section */
+        .feedback-section {
+            padding: 100px 40px;
+            text-align: center;
+        }
+
+        .feedback-card {
+            max-width: 700px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(106, 180, 247, 0.08), rgba(180, 142, 222, 0.08));
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 60px;
+            border: 1px solid rgba(180, 142, 222, 0.2);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.06);
+        }
+
+        .feedback-card h2 {
+            font-family: 'Nunito', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feedback-card p {
+            color: var(--text-medium);
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        .feedback-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .feedback-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(106, 180, 247, 0.3);
+        }
+
+        .feedback-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(106, 180, 247, 0.4);
+        }
+
+        .feedback-btn-secondary {
+            padding: 14px 32px;
+            background: transparent;
+            color: var(--primary-purple);
+            border: 2px solid var(--light-purple);
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .feedback-btn-secondary:hover {
+            background: rgba(180, 142, 222, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .satisfaction-stars {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 24px 0;
+        }
+
+        .star {
+            font-size: 36px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #ddd;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #fbbf24;
+            transform: scale(1.2);
+        }
+
+        .satisfaction-text {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-top: 8px;
+            min-height: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 14px;
+            border-top: 1px solid rgba(180, 142, 222, 0.1);
+        }
+
+        .footer-logo {
+            font-family: 'Nunito', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary-purple);
+            margin-bottom: 8px;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 36px;
+            }
+
+            .hero-cta {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bento-card.wide {
+                grid-column: span 1;
+            }
+
+            .features-container {
+                grid-template-columns: 1fr;
+            }
+
+            .roadmap-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .roadmap-container::before {
+                top: 0;
+                bottom: 0;
+                left: 24px;
+                right: auto;
+                width: 4px;
+                height: 100%;
+                transform: none;
+            }
+
+            .roadmap-item {
+                text-align: left;
+                padding-left: 60px;
+            }
+
+            .roadmap-node {
+                position: absolute;
+                left: 0;
+                margin: 0;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item,
+            .timeline-item:nth-child(odd) {
+                flex-direction: row;
+                padding-left: 60px;
+            }
+
+            .timeline-dot {
+                left: 20px;
+            }
+
+            .timeline-content {
+                width: 100%;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .section {
+                padding: 60px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Blobs -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-logo">
+            <div class="cube-icon">Q</div>
+            Qube
+        </a>
+        <ul class="nav-links">
+            <li><a href="#about">关于我们</a></li>
+            <li><a href="#features">核心功能</a></li>
+            <li><a href="#how">使用方式</a></li>
+            <li><a href="#roadmap">发展路线</a></li>
+            <li><a href="#feedback">反馈</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text fade-in">
+                <h1>Qube<br>校园智能问答平台</h1>
+                <p class="subtitle">
+                    Question Cube —— 你的校园知识魔方。<br>
+                    转动即得答案，让校园信息触手可及。
+                </p>
+                <div class="hero-cta">
+                    <a href="#features" class="btn-primary">探索功能</a>
+                    <a href="#feedback" class="btn-secondary">参与反馈</a>
+                </div>
+            </div>
+            <div class="hero-visual fade-in">
+                <div class="cube-mascot">
+                    <div class="cube-sparkles">
+                        <div class="sparkle"></div>
+                        <div class="sparkle"></div>
+                        <div class="sparkle"></div>
+                        <div class="sparkle"></div>
+                        <div class="sparkle"></div>
+                    </div>
+                    <div class="cube-body">
+                        <div class="cube-eyes">
+                            <div class="eye"></div>
+                            <div class="eye"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <h2 class="section-title fade-in">为什么需要 Qube？</h2>
+        <p class="section-subtitle fade-in">校园信息分散、获取困难？让 Qube 成为你的一站式知识入口</p>
+
+        <div class="bento-grid">
+            <div class="bento-card wide fade-in">
+                <div class="bento-icon">🎯</div>
+                <h3>解决信息碎片化</h3>
+                <p>校规、行政流程、场地预约、社团信息散落在各个微信群和公告栏中。Qube 将所有校园知识整合到一个智能平台，告别在聊天记录中翻找信息的烦恼。</p>
+            </div>
+            <div class="bento-card fade-in">
+                <div class="bento-icon">🧩</div>
+                <h3>为你量身推荐</h3>
+                <p>输入你的兴趣和意向，Qube 即可智能匹配最适合你的社团和校园活动。</p>
+            </div>
+            <div class="bento-card fade-in">
+                <div class="bento-icon">💬</div>
+                <h3>AI 即时回答</h3>
+                <p>基于强大的知识库，7×24小时为你解答校园生活中的各种疑问。</p>
+            </div>
+            <div class="bento-card fade-in">
+                <div class="bento-icon">🏫</div>
+                <h3>覆盖全年级</h3>
+                <p>无论你是刚入学的高一新生还是经验丰富的学长学姐，Qube 都能帮到你。</p>
+            </div>
+            <div class="bento-card wide fade-in">
+                <div class="bento-icon">⚡</div>
+                <h3>即点即用，零门槛</h3>
+                <p>无需下载 App，点击链接即可开始对话。Qube 将嵌入在你常用的校园平台上——公众号、学生会页面、MB 公开界面，随时随地获取帮助。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar fade-in">
+        <div class="stat-item">
+            <div class="stat-number" data-target="50">50+</div>
+            <div class="stat-label">覆盖社团数量</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">全天候在线服务</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">0</div>
+            <div class="stat-label">使用门槛</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">&lt;3s</div>
+            <div class="stat-label">平均响应时间</div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <h2 class="section-title fade-in">核心功能</h2>
+        <p class="section-subtitle fade-in">两大核心能力，覆盖你的校园信息需求</p>
+
+        <div class="features-container">
+            <div class="feature-card fade-in">
+                <span class="feature-number">01</span>
+                <h3><span class="emoji">🤖</span> 智能问答</h3>
+                <p>向 Qube 提出任何关于校园生活的问题，它会基于全面的知识库给出精准回答。无论是出门条怎么开、请假单怎么填、琴房使用规则，还是食堂开放时间，Qube 都能秒回。</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">校规查询</span>
+                    <span class="feature-tag">行政流程</span>
+                    <span class="feature-tag">场地信息</span>
+                    <span class="feature-tag">表单获取</span>
+                    <span class="feature-tag">生活指南</span>
+                </div>
+            </div>
+            <div class="feature-card fade-in">
+                <span class="feature-number">02</span>
+                <h3><span class="emoji">🎯</span> 活动推荐</h3>
+                <p>告诉 Qube 你的兴趣、专业意向和空余时间，它会为你智能匹配最适合的社团和活动。基于升学指导老师的建议和详细的社团信息，给出专业化的个性推荐。</p>
+                <div class="feature-tags">
+                    <span class="feature-tag">兴趣匹配</span>
+                    <span class="feature-tag">社团推荐</span>
+                    <span class="feature-tag">活动日历</span>
+                    <span class="feature-tag">专业导向</span>
+                    <span class="feature-tag">个性化建议</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section" id="how">
+        <h2 class="section-title fade-in">如何使用？</h2>
+        <p class="section-subtitle fade-in">三步开启你的 Qube 之旅</p>
+
+        <div class="timeline">
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h4>Step 1 · 点击链接</h4>
+                    <p>在高中部公众号、学生会公众号或 MB 公开界面找到 Qube 入口，点击即可进入。</p>
+                </div>
+            </div>
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h4>Step 2 · 输入问题</h4>
+                    <p>用自然语言向 Qube 提问或表达你的需求，就像和朋友聊天一样轻松。</p>
+                </div>
+            </div>
+            <div class="timeline-item fade-in">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h4>Step 3 · 获得回答</h4>
+                    <p>Qube 即刻从知识库中为你检索最相关的信息，提供清晰准确的回答和建议。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section class="section" id="roadmap">
+        <h2 class="section-title fade-in">发展路线</h2>
+        <p class="section-subtitle fade-in">Qube 正在成长，未来还有更多可能</p>
+
+        <div class="roadmap-container fade-in">
+            <div class="roadmap-item completed">
+                <div class="roadmap-node">✓</div>
+                <div class="roadmap-label">
+                    <h4>V1.0 基础版</h4>
+                    <p>校园基本信息问答 + 社团活动推荐</p>
+                </div>
+            </div>
+            <div class="roadmap-item current">
+                <div class="roadmap-node">2</div>
+                <div class="roadmap-label">
+                    <h4>V2.0 增强版</h4>
+                    <p>智能配对队友 + AI问答优化 + 个性化推荐</p>
+                </div>
+            </div>
+            <div class="roadmap-item">
+                <div class="roadmap-node">3</div>
+                <div class="roadmap-label">
+                    <h4>V3.0 教师端</h4>
+                    <p>会议系统 · 会议纪要 · 在线翻译 · 数字留档</p>
+                </div>
+            </div>
+            <div class="roadmap-item">
+                <div class="roadmap-node">4</div>
+                <div class="roadmap-label">
+                    <h4>V4.0 管理端</h4>
+                    <p>简化审批流 · 校区统一办公平台</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feedback Section -->
+    <section class="feedback-section" id="feedback">
+        <div class="feedback-card fade-in">
+            <h2>你的声音很重要</h2>
+            <p>Qube 始终在进化，而你的反馈是我们前进的动力。<br>告诉我们你的想法，帮助 Qube 变得更好。</p>
+
+            <div class="satisfaction-stars">
+                <span class="star" data-value="1">★</span>
+                <span class="star" data-value="2">★</span>
+                <span class="star" data-value="3">★</span>
+                <span class="star" data-value="4">★</span>
+                <span class="star" data-value="5">★</span>
+            </div>
+            <p class="satisfaction-text" id="satisfactionText">点击星星为 Qube 评分</p>
+
+            <div class="feedback-buttons">
+                <a href="https://www.wjx.cn/" target="_blank" class="feedback-btn">
+                    📝 填写反馈问卷
+                </a>
+                <a href="mailto:qube-feedback@school.edu.cn" class="feedback-btn-secondary">
+                    ✉️ 通过邮件联系我们
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">Qube</div>
+        <p>Question Cube · 校园智能问答平台</p>
+        <p style="margin-top: 8px; opacity: 0.7;">Explore & Create · Dream & Learn · Knowledge Unleashed</p>
+        <p style="margin-top: 16px; opacity: 0.5;">© 2026 Qube Team. Made with ❤️ for our campus.</p>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Fade-in on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Star rating
+        const stars = document.querySelectorAll('.star');
+        const satisfactionText = document.getElementById('satisfactionText');
+        const ratings = ['', '还需努力 😢', '有待提升 🤔', '还不错哦 😊', '非常好用 🎉', '超级满意 ✨'];
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const value = parseInt(star.dataset.value);
+                stars.forEach((s, i) => {
+                    if (i < value) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+                satisfactionText.textContent = ratings[value];
+            });
+
+            star.addEventListener('mouseenter', () => {
+                const value = parseInt(star.dataset.value);
+                stars.forEach((s, i) => {
+                    if (i < value) {
+                        s.style.color = '#fbbf24';
+                        s.style.transform = 'scale(1.2)';
+                    }
+                });
+            });
+
+            star.addEventListener('mouseleave', () => {
+                stars.forEach(s => {
+                    if (!s.classList.contains('active')) {
+                        s.style.color = '#ddd';
+                        s.style.transform = 'scale(1)';
+                    } else {
+                        s.style.color = '#fbbf24';
+                        s.style.transform = 'scale(1.2)';
+                    }
+                });
+            });
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
